@@ -1,12 +1,11 @@
 
 source("libraries.R")
-library(openmeteo)
 
 code <- geocode("Geneva", n_results = 10, language = "en", silent = T) |> 
   filter(country_code == "CH")
 
 lwr_lim <- today()
-upr_lim <- lwr_lim + 1
+upr_lim <- lwr_lim
 
 dr <- weather_forecast(location = code$name,
                        hourly = c("temperature_2m", 
@@ -16,6 +15,9 @@ dr <- weather_forecast(location = code$name,
                                   "cloud_cover"
                                   ),
                        start = lwr_lim,end = upr_lim)
+
+df_temperature <- dr |> 
+  select(datetime, hourly_temperature_2m) 
 
 df <- dr|> 
   mutate( date = date(datetime)) |> 
@@ -48,6 +50,14 @@ df |>
   annotate("rect", xmin = -5, xmax = 10, ymin = 5, ymax = 40, alpha = 0.2, fill = "blue")+
   labs(y = "wind", x = "temp",title  = paste0("Target"))
 
+specs <- df_temperature |> 
+  summarise( min_t = min(hourly_temperature_2m), 
+max_t = max(hourly_temperature_2m), delta = max_t - min_t)
+
+df_temperature |> 
+  ggplot(aes(datetime,hourly_temperature_2m))+ 
+  # geom_point() + 
+  geom_line() + 
+  geom_errorbar(aes(ymin = specs$min_t ,ymax = specs$max_t, x = ),width = 2) 
 
 
- 
