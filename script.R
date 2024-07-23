@@ -1,21 +1,53 @@
 
-library(tidyverse)
-library(lubridate)
-library(worldmet)
+source("libraries.R")
+library(openmeteo)
 
-dr <- importNOAA(code = "067000-99999",n.cores = 2,year = 2024)
+code <- geocode("Geneva", n_results = 10, language = "en", silent = T) |> 
+  filter(country_code == "CH")
 
+lwr_lim <- today()
+upr_lim <- lwr_lim + 1
 
-df <- dr |> 
-  select(date,air_temp) |> 
-  mutate( date = lubridate::ymd_hms(date))
+dr <- weather_forecast(location = code$name,
+                       hourly = c("temperature_2m", 
+                                  "precipitation",
+                                  "relative_humidity_2m",
+                                  "wind_speed_10m","wind_gusts_10m",
+                                  "cloud_cover"
+                                  ),
+                       start = lwr_lim,end = upr_lim)
 
+df <- dr|> 
+  mutate( date = date(datetime)) |> 
+  group_by(date) |> 
+  summarise( temp_min = min(hourly_temperature_2m), 
+             temp_max = max(hourly_temperature_2m),
+             wind_min = min(hourly_wind_speed_10m),
+             wind_max = max(hourly_wind_speed_10m),
+             wind_gusts_10m = max(hourly_wind_gusts_10m),
+             hourly_precipitation = min(hourly_precipitation)
+  ) 
+
+dr_daily <- weather_forecast(code$name,
+                       daily = c("uv_index_max"),
+                       start = lwr_lim,end = upr_lim)  
+
+df <- df |> 
+  left_join(dr_daily,by = "date")
 
 df |> 
-  filter( month(date) == 4) |> 
-  ggplot(aes(x= date, y = air_temp)) +
-  geom_line() +
-  scale_x_date(date_labels = "%m")
-# +
-  # labs(title  = paste0("Temperature for the month : ",input$month_val)) +
-  # theme(legend.position = "None")
+  ggplot()+
+  geom_errorbar(aes(xmin = temp_min,xmax = temp_max,y = wind_max),width = 2) +
+  geom_text(aes(x = temp_min, y = wind_max, label = temp_min), vjust = -4, color = "blue") +
+  geom_text(aes(x = temp_max, y = wind_max, label = temp_max), vjust = -4, color = "red") +
+  scale_x_continuous(n.breaks = 10,limits = c(-5,35)) +
+  scale_y_continuous(n.breaks = 10,limits = c(0,40)) +
+  geom_hline(yintercept = 10, linetype = 2, col = "grey")+
+  geom_vline(xintercept = 0, linetype = 2, col = "grey") +
+  theme(axis.text.x = element_text(angle = 0)) +
+  annotate("rect", xmin = -5, xmax = 10, ymin = 5, ymax = 40, alpha = 0.2, fill = "blue")+
+  labs(y = "wind", x = "temp",title  = paste0("Target"))
+
+
+
+ 

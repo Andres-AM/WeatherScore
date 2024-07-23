@@ -5,8 +5,8 @@ library(lubridate)
 library(modelr)
 library(plotly)
 library(DT)
+library(shiny)
 library(shinydashboard)
-
 
 ## Other settings 
 theme_set(theme_bw())
