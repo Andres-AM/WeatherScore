@@ -179,15 +179,15 @@ server <- function(input, output) {
     if(input$phase_type == "Bulking") { 
       
       list(
-      output_tidy()$table_data$target_bulk[[1]],
-      output_tidy()$table_data$ratio_bulk[[1]]
+        output_tidy()$table_data$target_bulk[[1]],
+        output_tidy()$table_data$ratio_bulk[[1]]
       )
-
+      
     } else if(input$phase_type == "Cutting") { 
       
       list(
-      output_tidy()$table_data$target_cut[[1]],
-      output_tidy()$table_data$ratio_cut[[1]]
+        output_tidy()$table_data$target_cut[[1]],
+        output_tidy()$table_data$ratio_cut[[1]]
       )
       
     }

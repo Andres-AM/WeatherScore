@@ -1,12 +1,12 @@
 
 ## All packages for Shiny App
-library(tidyverse)
 library(lubridate)
 library(modelr)
 library(plotly)
 library(DT)
 library(shiny)
 library(shinydashboard)
+library(tidyverse)
 
 ## Specific
 library(openmeteo)
