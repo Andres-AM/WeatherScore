@@ -94,7 +94,7 @@ plot_t <- df$all_data |>
   
 
 plot_t
-df$specs
+  df$all_specs |> arrange(desc(date))
 
 
 
@@ -109,12 +109,20 @@ plot_w <- df$specs |>
   geom_hline(yintercept = 10, linetype = 2, col = "grey")+
   geom_vline(xintercept = 0, linetype = 2, col = "grey") +
   theme(axis.text.x = element_text(angle = 0)) +
-  annotate("rect", xmin = -5, xmax = 10, ymin = 5, ymax = 40, alpha = 0.2, fill = "blue")+
-  annotate("rect", xmin = -5, xmax = 10, ymin = 5, ymax = 40, alpha = 0.2, fill = "lightblue")+
-  annotate("rect", xmin = 25, xmax = 35, ymin = 0, ymax = 25, alpha = 0.2, fill = "red")+
-  annotate("rect", xmin = 15, xmax = 25, ymin = 5, ymax = 35, alpha = 0.2, fill = "orange")+
-  annotate("rect", xmin = 25, xmax = 35, ymin = 25, ymax = 35, alpha = 0.2, fill = "orange")+
+  annotate("rect", xmin = -5, xmax = 10, ymin = 5, ymax = 25, alpha = 0.2, fill = "blue")+
+  annotate("rect", xmin = 10, xmax = 15, ymin = 5, ymax = 40, alpha = 0.2, fill = "blue")+
+  
+  annotate("rect", xmin = -5, xmax = 10, ymin = 25, ymax = 40, alpha = 0.2, fill = "lightblue")+
+  annotate("rect", xmin = 25, xmax = 35, ymin = 0, ymax = 20, alpha = 0.2, fill = "red")+
+  annotate("rect", xmin = 15, xmax = 25, ymin = 0, ymax = 35, alpha = 0.2, fill = "orange")+
+  annotate("rect", xmin = 25, xmax = 35, ymin = 20, ymax = 35, alpha = 0.2, fill = "orange")+
   labs(y = "wind", x = "temp",title  = paste0("Target"))
 
 plot_w
 plot_t
+
+
+
+20 - 10 * .2
+
+
